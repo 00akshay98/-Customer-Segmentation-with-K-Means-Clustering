@@ -1,49 +1,39 @@
-# History files
-.Rhistory
-.Rapp.history
+# K-Means Clustering
 
-# Session Data files
-.RData
-.RDataTmp
+# Importing the dataset
+dataset <- read.csv('Mall_Customers.csv')
 
-# User-specific files
-.Ruserdata
+X = dataset[4:5]
+plot(X)
+# Using the elbow method to find the optimal number of clusters
+set.seed(6)
+wcss = vector()
+for (i in 1:10) wcss[i] = sum(kmeans(X, i)$withinss)
+plot(1:10,
+     wcss,
+     type = 'b',
+     main = paste('The Elbow Method'),
+     xlab = 'Number of clusters',
+     ylab = 'WCSS')
 
-# Example code in package build process
-*-Ex.R
+# Applying K-Means to the Mall dataset
+set.seed(29)
+kmeans = kmeans(x = X, centers = 5, iter.max=200, nstart=25)
+y_kmeans = kmeans$cluster
 
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
-
-# RStudio files
-.Rproj.user/
-
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
-
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
-
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
-
-# pkgdown site
-docs/
-
-# translation temp files
-po/*~
-
-# RStudio Connect folder
-rsconnect/
+# Visualising the clusters
+#install.packages("cluster")
+library(cluster)
+clusplot(X,
+         y_kmeans,
+         lines = 0,
+         shade = TRUE,
+         color = TRUE,
+         labels = 2,
+         plotchar = TRUE,
+         span = TRUE,
+         main = paste('Clusters of customers'),
+         xlab = 'Annual Income',
+         ylab = 'Spending Score')
+y_kmeans <- as.data.frame(y_kmeans)
+write.csv(y_kmeans, file="k-meanReslut.csv")
